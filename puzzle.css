@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: #1f1151;
+}
+
+#title {
+    height: 150px;
+    width: 400px;
+}
+
+#board {
+    width: 240px; /* Раніше було 360px */
+    height: 240px; /* Раніше було 360px */
+    background-color: rgb(26, 26, 173);
+    border: 10px solid #1f1151;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#board img {
+    width: 78px;  /* Розмір для менших картинок, 240px / 3 = 80px мінус бордюри */
+    height: 78px; /* Те саме для висоти */
+    border: 1px solid #1f1151;
+}
