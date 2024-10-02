@@ -10,6 +10,31 @@
 <body>
     <img id="title" src="img/logo.png">
     <div id="board"></div>
-    <h1>Turns: <span id="turns">0</span></h1>
+    <h1>Turns: <span id="turnCount">0</span></p>
+    
+    <!-- <h2>Table of results</h2>
+    <table id="resultsTable" style="border-collapse: collapse; width: 100%;">
+        <tr>
+            <th style="border: 1px solid black; padding: 10px;">Name</th>
+            <th style="border: 1px solid black; padding: 10px;">Number of turns</th>
+        </tr>
+    </table> -->
+    <h2 class="textOnPage">Menu</h2>
+<button onclick="endGameEarly()">To end the game</button>
+<button onclick="changeDifficulty(1)">Level 1</button>
+<button onclick="changeDifficulty(2)">Level 2</button>
+<button onclick="changeDifficulty(3)">Level 3</button>
+
+<h2 class = "textOnPage">Table of results</h2>
+<table id="resultsTable" style="border-collapse: collapse; width: 100%;">
+    <tr>
+        <th style="border: 1px solid black; padding: 10px;">Name</th>
+        <th style="border: 1px solid black; padding: 10px;">Number of turns</th>
+    </tr>
+</table>
+
+<!-- <p>Кількість ходів: <span id="turnCount">0</span></p> -->
+
+<!-- <div id="board" style="display: grid; gap: 5px;"></div> -->
 </body>
 </html>

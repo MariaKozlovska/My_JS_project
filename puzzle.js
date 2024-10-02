@@ -1,66 +1,97 @@
-let rows = 3;
+let rows = 3; // Початково 3x3
 let columns = 3;
 
 let currTile;
 let otherTile; // blank tile
-
 let turns = 0;
+let imgOrder = [];
+let gameStarted = false;
 
-let imgOrder = ["4", "2", "8", "5", "1", "6", "7", "9", "3"];
+// Функція для створення порядку картинок
+function generateImgOrder(size) {
+    imgOrder = Array.from({ length: size * size }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+}
 
-window.onload = function() {
+// Функція для ініціалізації гри
+function initGame() {
+    generateImgOrder(rows); // Генеруємо порядок картинок для відповідного розміру
+    let board = document.getElementById("board");
+    board.innerHTML = ""; // Очищаємо дошку
+
     for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < columns; c++) {
-            
-            let tile = document.createElement("img"); // <img>
-            tile.id = r.toString() + "-" + c.toString(); // Define id for the tile
-            tile.src = "img/" + imgOrder.shift() + ".jpg"; // Set the src of the image
+        for(let c = 0; c < columns; c++) {
+            let tile = document.createElement("img");
+            tile.id = r.toString() + "-" + c.toString();
+            tile.src = "img/" + imgOrder.shift() + ".jpg"; // Використовуємо рандомний порядок зображень
 
             // DRAG FUNCTIONALITY
-            tile.addEventListener("dragstart", dragStart); // Start dragging
-            tile.addEventListener("dragover", dragOver); // While dragging over
-            tile.addEventListener("dragenter", dragEnter); // Enter another tile
-            tile.addEventListener("dragleave", dragLeave); // Leave the tile
-            tile.addEventListener("drop", dragDrop); // Drop onto another tile
-            tile.addEventListener("dragend", dragEnd); // End dragging
+            tile.addEventListener("dragstart", dragStart);
+            tile.addEventListener("dragover", dragOver);
+            tile.addEventListener("dragenter", dragEnter);
+            tile.addEventListener("dragleave", dragLeave);
+            tile.addEventListener("drop", dragDrop);
+            tile.addEventListener("dragend", dragEnd);
 
-            document.getElementById("board").append(tile);
-
-            console.log(tile.src); // Logging the image source for debugging
+            board.append(tile);
         }
     }
+
+    turns = 0; // Скидаємо лічильник ходів
+    document.getElementById("turnCount").innerText = turns;
+    gameStarted = true; // Встановлюємо, що гра почалась
+    saveGameState(); // Зберігаємо початковий стан гри
+}
+
+// Функція для дострокового завершення гри
+function endGameEarly() {
+    if (!gameStarted) return;
+    savePlayerResult();
+    gameStarted = false;
+}
+
+// Функція для зміни рівня складності
+function changeDifficulty(level) {
+    switch(level) {
+        case 1:
+            rows = 3;
+            columns = 3;
+            break;
+        case 2:
+            rows = 4;
+            columns = 4;
+            break;
+        case 3:
+            rows = 5;
+            columns = 5;
+            break;
+    }
+    initGame();
 }
 
 // Оголошення функцій для drag-and-drop
 function dragStart() {
-    console.log("Drag Start");
-    currTile = this; // Save the current tile being dragged
+    currTile = this;
 }
 
 function dragOver(e) {
-    e.preventDefault(); // Prevent default behavior to allow drop
+    e.preventDefault();
 }
 
 function dragEnter(e) {
-    e.preventDefault(); // Prevent default behavior
+    e.preventDefault();
 }
 
-function dragLeave() {
-    console.log("Drag Leave");
-}
+function dragLeave() {}
 
 function dragDrop() {
-    otherTile = this; // Save the tile being dropped onto
-    console.log("Dropped");
+    otherTile = this;
 }
 
 function dragEnd() {
-    // Ensure otherTile exists and has the correct image
-    if (!otherTile || !otherTile.src.includes("3.jpg")) {
+    if (!otherTile.src.includes("3.jpg")) {
         return;
     }
-    
-    let currCoords = currTile.id.split("-"); //"0-0" -> ["0", "0"]
+    let currCoords = currTile.id.split("-");
     let r = parseInt(currCoords[0]);
     let c = parseInt(currCoords[1]);
 
@@ -68,7 +99,6 @@ function dragEnd() {
     let r2 = parseInt(otherCoords[0]);
     let c2 = parseInt(otherCoords[1]);
 
-    // Check if tiles are adjacent
     let moveLeft = r == r2 && c2 == c - 1;
     let moveRight = r == r2 && c2 == c + 1;
     let moveUp = c == c2 && r2 == r - 1;
@@ -77,18 +107,71 @@ function dragEnd() {
     let isAdjacent = moveLeft || moveRight || moveUp || moveDown; 
 
     if (isAdjacent) {
-        // Swap the tiles
         let currImg = currTile.src;
         let otherImg = otherTile.src;
 
         currTile.src = otherImg;
         otherTile.src = currImg;
 
-        turns += 1;
-        document.getElementById("turns").innerText = turns;
-
-        console.log("Tiles swapped");
-    } else {
-        console.log("Tiles are not adjacent");
+        turns++;
+        saveGameState();
+        document.getElementById("turnCount").innerText = turns;
+        console.log("Tiles swapped, turns: " + turns);
     }
+}
+
+// Збереження та завантаження стану гри
+function saveGameState() {
+    let boardState = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < columns; c++) {
+            let tile = document.getElementById(r.toString() + "-" + c.toString());
+            boardState.push(tile.src);
+        }
+    }
+    localStorage.setItem("boardState", JSON.stringify(boardState));
+    localStorage.setItem("turns", turns);
+    console.log("Game state saved!");
+}
+
+function loadGameState() {
+    let savedBoardState = JSON.parse(localStorage.getItem("boardState"));
+    if (savedBoardState) {
+        turns = parseInt(localStorage.getItem("turns")) || 0;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < columns; c++) {
+                let tile = document.getElementById(r.toString() + "-" + c.toString());
+                tile.src = savedBoardState.shift();
+            }
+        }
+        document.getElementById("turnCount").innerText = turns;
+        console.log("Game state loaded!");
+    }
+}
+
+function savePlayerResult() {
+    let playerName = prompt("Enter your name to save the result:");
+    if (!playerName) return;
+
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+    results.push({ name: playerName, turns: turns });
+    localStorage.setItem("results", JSON.stringify(results));
+
+    displayResults();
+}
+
+function displayResults() {
+    let results = JSON.parse(localStorage.getItem("results")) || [];
+    let resultsTable = document.getElementById("resultsTable");
+    resultsTable.innerHTML = "<tr><th>Name</th><th>Number of turns</th></tr>";
+
+    results.forEach(result => {
+        let row = `<tr><td>${result.name}</td><td>${result.turns}</td></tr>`;
+        resultsTable.innerHTML += row;
+    });
+}
+
+window.onload = function() {
+    initGame();
+    displayResults();
 }
