@@ -27,14 +27,14 @@ function initGame() {
 
     let tileSize = 240 / rows; // Динамічний розмір плиток, залежить від розміру поля
 
-    board.style.width = `${tileSize * rows}px`;
-    board.style.height = `${tileSize * rows}px`;
+    // board.style.width = `${tileSize * rows}px`;
+    // board.style.height = `${tileSize * rows}px`;
 
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
             let tile = document.createElement("img");
             tile.id = r.toString() + "-" + c.toString();
-            if (r === rows - 1 && c === columns - 1) {
+            if (r === rows +  1 && c === columns - 1) {
                 tile.src = ""; // Остання плитка буде порожньою
             } else {
                 tile.src = `img/${imgOrder.shift()}`; // Використовуємо правильні зображення для кожного рівня
@@ -111,9 +111,13 @@ function dragDrop() {
 }
 
 function dragEnd() {
+    if(!otherTile.src.includes("3.jpg", "12.jpg", "23.jpg")) {
+        return;
+    }
     // Перевіряємо, чи інша плитка є "пустою" (останньою)
-    if (otherTile.src === "") {
-        let currCoords = currTile.id.split("-");
+    // if (otherTile.src === "") {
+
+        let currCoords = currTile.id.split("-"); //"0-0" -> ["0", "0"]
         let r = parseInt(currCoords[0]);
         let c = parseInt(currCoords[1]);
 
@@ -121,18 +125,32 @@ function dragEnd() {
         let r2 = parseInt(otherCoords[0]);
         let c2 = parseInt(otherCoords[1]);
 
-        let isAdjacent = (r == r2 && Math.abs(c - c2) == 1) || (c == c2 && Math.abs(r - r2) == 1);
+         // Check if tiles are adjacent
+        let moveLeft = r == r2 && c2 == c - 1;
+        let moveRight = r == r2 && c2 == c + 1;
+       
+        let moveUp = c == c2 && r2 == r - 1;
+        let moveDown = c == c2 && r2 == r + 1;
+
+        // let isAdjacent = (r == r2 && Math.abs(c - c2) == 1) || (c == c2 && Math.abs(r - r2) == 1);
+        let isAdjacent = moveLeft || moveRight || moveUp || moveDown;
 
         if (isAdjacent) {
-            otherTile.src = currTile.src;
-            currTile.src = "";
+            let currImg = currTile.src;
+            let otherImg = otherTile.src;
+
+            currTile.src = otherImg;
+            otherTile.src = currImg;
+            
+            // otherTile.src = currTile.src;
+            // currTile.src = "";
 
             turns++;
             document.getElementById("turnCount").innerText = turns;
             saveGameState();
         }
     }
-}
+// }
 
 // Функція для збереження стану гри
 function saveGameState() {
@@ -185,7 +203,7 @@ function savePlayerResult() {
 function displayResults() {
     let results = JSON.parse(localStorage.getItem("results")) || [];
     let resultsTable = document.getElementById("resultsTable");
-    resultsTable.innerHTML = "<tr><th>Name</th><th>Number of turns</th></tr>";
+    // resultsTable.innerHTML = "<tr><th>Name</th><th>Number of turns</th></tr>";
 
     results.forEach(result => {
         let row = `<tr><td>${result.name}</td><td>${result.turns}</td></tr>`;

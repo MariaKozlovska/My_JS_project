@@ -20,6 +20,8 @@ body {
 }
 
 #board {
+    width: 240px;
+    height: 240px;
     background-color: rgb(26, 26, 173);
     border: 10px solid #1f1151;
     margin: 0 auto;
@@ -28,6 +30,8 @@ body {
 }
 
 #board img {
+    width: 78px;  /* Розмір для менших картинок, 240px / 3 = 80px мінус бордюри */
+    height: 78px; /* Те саме для висоти */
     border: 1px solid #1f1151;
 }
 
@@ -58,6 +62,8 @@ button {
 
 button:hover {
     background-color: #3c318e;
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
     transform: scale(1.1);
 }
 

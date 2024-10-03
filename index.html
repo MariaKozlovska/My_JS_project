@@ -10,17 +10,19 @@
 <body>
     <img id="title" src="img/logo.png" alt="Slide Puzzle">
     
+    <!-- <div id="board"></div> -->
+
+    <div id="game-container"></div>
+        <h1>Turns: <span id="turnCount">0</span></h1>
+        <div id="board"></div>
+    </div>
+    
     <div id="menu-container">
         <h2 class="textOnPage">Menu</h2>
-        <button onclick="endGameEarly()">End Game</button>
+        <button onclick="endGameEarly()">To end the Game</button>
         <button onclick="changeDifficulty(1)">Level 1 (3x3)</button>
         <button onclick="changeDifficulty(2)">Level 2 (4x4)</button>
         <button onclick="changeDifficulty(3)">Level 3 (5x5)</button>
-    </div>
-
-    <div id="game-container">
-        <h1>Turns: <span id="turnCount">0</span></h1>
-        <div id="board"></div>
     </div>
 
     <h2 class="textOnPage">Table of Results</h2>
