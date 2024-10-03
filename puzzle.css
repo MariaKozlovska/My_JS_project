@@ -6,17 +6,17 @@ body {
 }
 
 #title {
-    padding-bottom: 22px;
+    padding-bottom: 5px;
     height: 150px;
     width: 400px;
 }
 
 #menu-container {
-    padding: 20px;
+    padding: 5px;
 }
 
 #game-container {
-    padding: 20px;
+    padding: 5px;
 }
 
 #board {
