@@ -8,33 +8,27 @@
     <script src="puzzle.js"></script>
 </head>
 <body>
-    <img id="title" src="img/logo.png">
-    <div id="board"></div>
-    <h1>Turns: <span id="turnCount">0</span></p>
+    <img id="title" src="img/logo.png" alt="Slide Puzzle">
     
-    <!-- <h2>Table of results</h2>
+    <div id="menu-container">
+        <h2 class="textOnPage">Menu</h2>
+        <button onclick="endGameEarly()">End Game</button>
+        <button onclick="changeDifficulty(1)">Level 1 (3x3)</button>
+        <button onclick="changeDifficulty(2)">Level 2 (4x4)</button>
+        <button onclick="changeDifficulty(3)">Level 3 (5x5)</button>
+    </div>
+
+    <div id="game-container">
+        <h1>Turns: <span id="turnCount">0</span></h1>
+        <div id="board"></div>
+    </div>
+
+    <h2 class="textOnPage">Table of Results</h2>
     <table id="resultsTable" style="border-collapse: collapse; width: 100%;">
         <tr>
             <th style="border: 1px solid black; padding: 10px;">Name</th>
             <th style="border: 1px solid black; padding: 10px;">Number of turns</th>
         </tr>
-    </table> -->
-    <h2 class="textOnPage">Menu</h2>
-<button onclick="endGameEarly()">To end the game</button>
-<button onclick="changeDifficulty(1)">Level 1</button>
-<button onclick="changeDifficulty(2)">Level 2</button>
-<button onclick="changeDifficulty(3)">Level 3</button>
-
-<h2 class = "textOnPage">Table of results</h2>
-<table id="resultsTable" style="border-collapse: collapse; width: 100%;">
-    <tr>
-        <th style="border: 1px solid black; padding: 10px;">Name</th>
-        <th style="border: 1px solid black; padding: 10px;">Number of turns</th>
-    </tr>
-</table>
-
-<!-- <p>Кількість ходів: <span id="turnCount">0</span></p> -->
-
-<!-- <div id="board" style="display: grid; gap: 5px;"></div> -->
+    </table>
 </body>
 </html>

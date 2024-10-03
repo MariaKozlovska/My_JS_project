@@ -11,13 +11,15 @@ body {
     width: 400px;
 }
 
-/* #textOnPage {
-    padding: 22px auto;
-} */
+#menu-container {
+    padding: 20px;
+}
+
+#game-container {
+    padding: 20px;
+}
 
 #board {
-    width: 240px;
-    height: 240px; 
     background-color: rgb(26, 26, 173);
     border: 10px solid #1f1151;
     margin: 0 auto;
@@ -26,8 +28,6 @@ body {
 }
 
 #board img {
-    width: 78px;  /* Розмір для менших картинок, 240px / 3 = 80px мінус бордюри */
-    height: 78px; /* Те саме для висоти */
     border: 1px solid #1f1151;
 }
 
@@ -47,23 +47,20 @@ button {
     margin: 10px;
     font-size: 18px;
     font-weight: bold;
-    background-color: #1f1151; /* Зелений фон */
-    color: white; /* Білий текст */
+    background-color: #1f1151;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Додаємо тінь */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #1f1151; /* Трохи темніший зелений при наведенні */
-    
-        -webkit-transform: scale(1.1);
-        -ms-transform: scale(1.1);
-        transform: scale(1.1);
+    background-color: #3c318e;
+    transform: scale(1.1);
 }
 
 button:active {
-    background-color: #1f1151; /* Ще темніший при натисканні */
+    background-color: #2a216e;
 }

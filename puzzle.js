@@ -1,28 +1,47 @@
-let rows = 3; // Початково 3x3
+let rows = 3;
 let columns = 3;
-
 let currTile;
-let otherTile; // blank tile
+let otherTile;
 let turns = 0;
 let imgOrder = [];
 let gameStarted = false;
 
-// Функція для створення порядку картинок
-function generateImgOrder(size) {
-    imgOrder = Array.from({ length: size * size }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+// Массив зображень для кожного рівня (1.jpg, 2.jpg,... для 1 рівня, 10.jpg, 11.jpg,... для 2 рівня і т.д.)
+const imagesByLevel = {
+    1: Array.from({ length: 9 }, (_, i) => `${i + 1}.jpg`),  // 1-9.jpg для рівня 1
+    2: Array.from({ length: 16 }, (_, i) => `${i + 10}.jpg`), // 10-25.jpg для рівня 2
+    3: Array.from({ length: 25 }, (_, i) => `${i + 26}.jpg`)  // 26-50.jpg для рівня 3
+};
+
+// Функція для створення порядку картинок для конкретного рівня
+function generateImgOrder(level) {
+    const images = [...imagesByLevel[level]];
+    return images.sort(() => Math.random() - 0.5); // Перемішуємо картинки випадковим чином
 }
 
 // Функція для ініціалізації гри
 function initGame() {
-    generateImgOrder(rows); // Генеруємо порядок картинок для відповідного розміру
+    imgOrder = generateImgOrder(getLevel()); // Генеруємо порядок картинок для відповідного рівня
     let board = document.getElementById("board");
-    board.innerHTML = ""; // Очищаємо дошку
+    board.innerHTML = ""; // Очищуємо дошку
+
+    let tileSize = 240 / rows; // Динамічний розмір плиток, залежить від розміру поля
+
+    board.style.width = `${tileSize * rows}px`;
+    board.style.height = `${tileSize * rows}px`;
 
     for (let r = 0; r < rows; r++) {
-        for(let c = 0; c < columns; c++) {
+        for (let c = 0; c < columns; c++) {
             let tile = document.createElement("img");
             tile.id = r.toString() + "-" + c.toString();
-            tile.src = "img/" + imgOrder.shift() + ".jpg"; // Використовуємо рандомний порядок зображень
+            if (r === rows - 1 && c === columns - 1) {
+                tile.src = ""; // Остання плитка буде порожньою
+            } else {
+                tile.src = `img/${imgOrder.shift()}`; // Використовуємо правильні зображення для кожного рівня
+            }
+
+            tile.style.width = `${tileSize - 2}px`;
+            tile.style.height = `${tileSize - 2}px`;
 
             // DRAG FUNCTIONALITY
             tile.addEventListener("dragstart", dragStart);
@@ -36,17 +55,21 @@ function initGame() {
         }
     }
 
-    turns = 0; // Скидаємо лічильник ходів
+    turns = 0;
     document.getElementById("turnCount").innerText = turns;
-    gameStarted = true; // Встановлюємо, що гра почалась
-    saveGameState(); // Зберігаємо початковий стан гри
+    gameStarted = true;
+    saveGameState();
 }
 
-// Функція для дострокового завершення гри
-function endGameEarly() {
-    if (!gameStarted) return;
-    savePlayerResult();
-    gameStarted = false;
+// Функція для отримання поточного рівня (кількість рядів визначає рівень)
+function getLevel() {
+    if (rows === 3) {
+        return 1; // Перший рівень — 3x3
+    } else if (rows === 4) {
+        return 2; // Другий рівень — 4x4
+    } else if (rows === 5) {
+        return 3; // Третій рівень — 5x5
+    }
 }
 
 // Функція для зміни рівня складності
@@ -65,10 +88,10 @@ function changeDifficulty(level) {
             columns = 5;
             break;
     }
-    initGame();
+    initGame(); // Перезавантажуємо гру з новими параметрами
 }
 
-// Оголошення функцій для drag-and-drop
+// Drag-and-drop функції
 function dragStart() {
     currTile = this;
 }
@@ -88,39 +111,30 @@ function dragDrop() {
 }
 
 function dragEnd() {
-    if (!otherTile.src.includes("3.jpg")) {
-        return;
-    }
-    let currCoords = currTile.id.split("-");
-    let r = parseInt(currCoords[0]);
-    let c = parseInt(currCoords[1]);
+    // Перевіряємо, чи інша плитка є "пустою" (останньою)
+    if (otherTile.src === "") {
+        let currCoords = currTile.id.split("-");
+        let r = parseInt(currCoords[0]);
+        let c = parseInt(currCoords[1]);
 
-    let otherCoords = otherTile.id.split("-");
-    let r2 = parseInt(otherCoords[0]);
-    let c2 = parseInt(otherCoords[1]);
+        let otherCoords = otherTile.id.split("-");
+        let r2 = parseInt(otherCoords[0]);
+        let c2 = parseInt(otherCoords[1]);
 
-    let moveLeft = r == r2 && c2 == c - 1;
-    let moveRight = r == r2 && c2 == c + 1;
-    let moveUp = c == c2 && r2 == r - 1;
-    let moveDown = c == c2 && r2 == r + 1;
+        let isAdjacent = (r == r2 && Math.abs(c - c2) == 1) || (c == c2 && Math.abs(r - r2) == 1);
 
-    let isAdjacent = moveLeft || moveRight || moveUp || moveDown; 
+        if (isAdjacent) {
+            otherTile.src = currTile.src;
+            currTile.src = "";
 
-    if (isAdjacent) {
-        let currImg = currTile.src;
-        let otherImg = otherTile.src;
-
-        currTile.src = otherImg;
-        otherTile.src = currImg;
-
-        turns++;
-        saveGameState();
-        document.getElementById("turnCount").innerText = turns;
-        console.log("Tiles swapped, turns: " + turns);
+            turns++;
+            document.getElementById("turnCount").innerText = turns;
+            saveGameState();
+        }
     }
 }
 
-// Збереження та завантаження стану гри
+// Функція для збереження стану гри
 function saveGameState() {
     let boardState = [];
     for (let r = 0; r < rows; r++) {
@@ -131,9 +145,9 @@ function saveGameState() {
     }
     localStorage.setItem("boardState", JSON.stringify(boardState));
     localStorage.setItem("turns", turns);
-    console.log("Game state saved!");
 }
 
+// Функція для завантаження стану гри
 function loadGameState() {
     let savedBoardState = JSON.parse(localStorage.getItem("boardState"));
     if (savedBoardState) {
@@ -145,10 +159,17 @@ function loadGameState() {
             }
         }
         document.getElementById("turnCount").innerText = turns;
-        console.log("Game state loaded!");
     }
 }
 
+// Функція для дострокового завершення гри
+function endGameEarly() {
+    if (!gameStarted) return;
+    savePlayerResult();
+    gameStarted = false;
+}
+
+// Функція для збереження результатів гравця
 function savePlayerResult() {
     let playerName = prompt("Enter your name to save the result:");
     if (!playerName) return;
@@ -160,6 +181,7 @@ function savePlayerResult() {
     displayResults();
 }
 
+// Функція для відображення результатів
 function displayResults() {
     let results = JSON.parse(localStorage.getItem("results")) || [];
     let resultsTable = document.getElementById("resultsTable");
@@ -171,7 +193,8 @@ function displayResults() {
     });
 }
 
+// Завантаження при відкритті сторінки
 window.onload = function() {
     initGame();
     displayResults();
-}
+};
