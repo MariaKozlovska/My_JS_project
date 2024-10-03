@@ -13,10 +13,10 @@ const imagesByLevel = {
     3: Array.from({ length: 25 }, (_, i) => `${i + 26}.jpg`)  // 26-50.jpg для рівня 3
 };
 
-// Функція для створення порядку картинок для конкретного рівня
+// Функція створення порядку картинок для конкретного рівня
 function generateImgOrder(level) {
     const images = [...imagesByLevel[level]];
-    return images.sort(() => Math.random() - 0.5); // Перемішуємо картинки випадковим чином
+    return images.sort(() => Math.random() - 0.5);
 }
 
 // Функція для ініціалізації гри
@@ -27,8 +27,8 @@ function initGame() {
 
     let tileSize = 240 / rows; // Динамічний розмір плиток, залежить від розміру поля
 
-    // board.style.width = `${tileSize * rows}px`;
-    // board.style.height = `${tileSize * rows}px`;
+    board.style.width = `${tileSize * rows}px`;
+    board.style.height = `${tileSize * rows}px`;
 
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
@@ -37,7 +37,7 @@ function initGame() {
             if (r === rows +  1 && c === columns - 1) {
                 tile.src = ""; // Остання плитка буде порожньою
             } else {
-                tile.src = `img/${imgOrder.shift()}`; // Використовуємо правильні зображення для кожного рівня
+                tile.src = `img/${imgOrder.shift()}`; // Використовуємо відповідні зображення для кожного рівня
             }
 
             tile.style.width = `${tileSize - 2}px`;
@@ -64,11 +64,11 @@ function initGame() {
 // Функція для отримання поточного рівня (кількість рядів визначає рівень)
 function getLevel() {
     if (rows === 3) {
-        return 1; // Перший рівень — 3x3
+        return 1; // 3x3
     } else if (rows === 4) {
-        return 2; // Другий рівень — 4x4
+        return 2; // 4x4
     } else if (rows === 5) {
-        return 3; // Третій рівень — 5x5
+        return 3; // 5x5
     }
 }
 
@@ -125,7 +125,7 @@ function dragEnd() {
         let r2 = parseInt(otherCoords[0]);
         let c2 = parseInt(otherCoords[1]);
 
-         // Check if tiles are adjacent
+         // Перевіряємо, чи плитки розташовані поруч
         let moveLeft = r == r2 && c2 == c - 1;
         let moveRight = r == r2 && c2 == c + 1;
        
